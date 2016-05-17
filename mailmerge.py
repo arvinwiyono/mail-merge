@@ -16,16 +16,42 @@ def fill_template(template, subvars):
 	'''
 	strings = template.split("$")
 	output = ""
-	for string in strings:
-		if is_scalar(string):
-			output += translate_scalar(string, subvars)
+	
+	i = 0
+	while i < len(strings):	
+		current = strings[i]
+
+		if is_scalar(current):
+			output += translate_scalar(current, subvars)
+
+		elif is_loop(current):
+
+			end_is_found = False
+			temp = ""
+
+			while(not end_is_found):
+				current = strings[i]
+				if '")' in current:
+					end_is_found = True
+				temp += current
+				i += 1
+
+			output += temp[4:-1]
+
 		else:
-			output += string
+			output += current
+
+		i += 1
 	return output
 
 
 def is_scalar(string):
 	if (len(string) > 0) and (string[0] == '('):
+		return True
+	return False
+
+def is_loop(string):
+	if(len(string) >= 4) and (string[0:4] == 'FOR('):
 		return True
 	return False
 
