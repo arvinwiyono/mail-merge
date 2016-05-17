@@ -9,12 +9,12 @@ class MailMergeTest(unittest.TestCase):
 		self.loop = "$FOR(DANCELIST, \"$(STEP)$(DANCER)\")"
 
 
-	def test_fill_template_with_result(self):
+	def test_fill_template_with_result_1(self):
 		self.assertEqual(fill_template(self.scalar, self.dict), "Ginger Rogers was in The Martian. Ginger Rogers is a dancer.")
 
-	# def test_fill_template_with_error(self):
-	# 	temp = {'DANCER':'Ginger Rogers'}
-	# 	self.assertEqual(fill_template(self.scalar, temp), "The Ginger Rogers is playing in The Martian")
+	def test_fill_template_with_result_2(self):
+		self.assertEqual(fill_template('$(DANCER)$(FILM)$(FILM)', self.dict), "Ginger RogersThe MartianThe Martian")
+
 
 	def test_is_scalar_returns_true_1(self):
 		self.assertTrue(is_scalar("(DANCER"))
@@ -30,12 +30,12 @@ class MailMergeTest(unittest.TestCase):
 
 	def test_translate_scalar(self):
 		temp = {"fgh":"test"}
-		self.assertEqual(translate_scalar("(fgh) ijk", **temp), "test ijk")
+		self.assertEqual(translate_scalar("(fgh) ijk", temp), "test ijk")
 
 	def test_translate_scalar_with_error(self):
 		temp = {}
 		with self.assertRaises(KeyError) as raises: 
-			translate_scalar("(fgh) ijk", **temp)
+			translate_scalar("(fgh) ijk", temp)
 		self.assertEqual(str(raises.exception), '\'fgh\'')
 
 

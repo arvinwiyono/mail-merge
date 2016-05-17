@@ -18,7 +18,7 @@ def fill_template(template, subvars):
 	output = ""
 	for string in strings:
 		if is_scalar(string):
-			output += translate_scalar(string, **subvars)
+			output += translate_scalar(string, subvars)
 		else:
 			output += string
 	return output
@@ -29,8 +29,8 @@ def is_scalar(string):
 		return True
 	return False
 
-def translate_scalar(input_string, **kwargs):
+def translate_scalar(input_string, word_hash):
 	translation = str.maketrans("()", "{}")
 	input_string = "$" + input_string.translate(translation)
 	t = Template(input_string)
-	return t.substitute(kwargs)
+	return t.substitute(word_hash)
