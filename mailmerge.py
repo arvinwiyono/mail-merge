@@ -25,7 +25,6 @@ def fill_template(template, subvars):
 			output += translate_scalar(current, subvars)
 
 		elif is_loop(current):
-
 			end_is_found = False
 			temp = ""
 
@@ -36,7 +35,16 @@ def fill_template(template, subvars):
 				temp += current
 				i += 1
 
-			output += temp[4:-1]
+			# exclude the first four letters 'FOR('
+			temp = temp[4:-1]
+			[key, macro] = temp.split(",")
+
+			# strip off double quote marks
+			macro = macro[1:-1]
+			if not key in subvars:
+				raise  MacroNotDefined("The macro: '" + key + "' is not defined")
+
+			output += translate_loop(macro, subvars[key])
 
 		else:
 			output += current
@@ -57,6 +65,27 @@ def is_loop(string):
 
 def translate_scalar(input_string, word_hash):
 	translation = str.maketrans("()", "{}")
-	input_string = "$" + input_string.translate(translation)
+
+	input_string = input_string.translate(translation)
+
+	# To avoid attaching $ to the input given by translate_loop()
+	if input_string[0] == '{':
+		input_string = '$'+ input_string
+
 	t = Template(input_string)
-	return t.substitute(word_hash)
+	try:
+		result = t.substitute(word_hash)
+		return result
+	except KeyError as e:
+		raise MacroNotDefined("The macro: " + str(e) + " is not defined")
+
+def translate_loop(macro, loop_dicts):
+	macro = macro.replace("(", "$(")
+	output = ""
+	for ld in loop_dicts:
+		output += translate_scalar(macro, ld)
+		output += " "
+	return output.rstrip()
+
+class MacroNotDefined(Exception):
+	pass
