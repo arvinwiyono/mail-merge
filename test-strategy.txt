@@ -4,37 +4,33 @@ Wanyu Yin 24141232
 
 The Python modules that we use for automated unit testing are unittest and mock, and nosetests for the test runner. 
 
-In this assignment, we will perform Test-Driven Development (TDD) in conjunction with pair-programming.
+In this assignment, we will adopt the concept of Test-Driven Development (TDD) in conjunction with pair-programming.
 
-Aside from TDD, we are going to adopt white-box testing strategy, particularly statement and branch coverage (in some cases).
-
-
-TEST-DRIVEN-DEVELOPMENT
+TDD PROCESS
 -----------------------
-1. Begin with writing a minimum amount of test
+1. Begin with writing the test
 2. Run the test and it should fail
 3. Implement the module that will make the test pass
-4. Refactor (not implemented thoroughly as code elegance is not assessed)
+4. Refactor if necessary
 5. Repeat
 
+STRATEGY
+-----------------------
+Aside from TDD, we are going to adopt white-box testing strategy, particularly statement and branch coverage (in some cases).
 
 MOCK
------------------------
 Mock is used for creating doubles of any external modules that accesses a network. This is useful to test our module in isolation while being able to control the environment.
 
 Under necessary circumstances, Mock objects need to be verified by using: assert_called_() function family to indicate whether a certain block of code has been executed.
 
 
 REGRESSION TEST
------------------------
 Before pushing to the remote, both team members are obligated to run regression testing by executing the command: nosetests
 
 
 CODE-COVERAGE
------------------------
 We use coverage.py to compute the percentage of executed lines of code during testing. The threshold that we set is > 90%.
 
 
 CONTINUOUS INTEGRATION
------------------------
 Our drone.io project has been set up to detect any new commits pushed to our Bitbucket repository. As a result, a new build will be kicked automatically whenever the codebase is updated.
