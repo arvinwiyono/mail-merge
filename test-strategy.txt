@@ -1,6 +1,6 @@
 FIT4004 Assignment 3 Test Strategy
-Arvin Wiyono 24282588
-Wanyu Yin 24141232
+Arvin Wiyono - 24282588
+Wanyu Yin - 24141232
 
 The Python modules that we use for automated unit testing are unittest and mock, and nosetests for the test runner. 
 
@@ -16,7 +16,7 @@ TDD PROCESS
 
 STRATEGY
 -----------------------
-Aside from TDD, we are going to adopt white-box testing strategy, particularly statement and branch coverage (in some cases).
+Aside from TDD, we are going to adopt white-box testing strategy, particularly statement and branch coverage. In some cases, boundary analysis testing needs to be applied. For example: when a function has an if-statement that checks whether the length of a string meets the minimum value.
 
 MOCK
 Mock is used for creating doubles of any external modules that accesses a network. This is useful to test our module in isolation while being able to control the environment.

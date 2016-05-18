@@ -57,12 +57,12 @@ def fill_template(template="", subvars={}):
 	return output
 
 
-def is_scalar(string):
+def is_scalar(string=""):
 	if (len(string) > 0) and (string[0] == '('):
 		return True
 	return False
 
-def is_loop(string):
+def is_loop(string=""):
 	if(len(string) >= 4) and (string[0:4] == 'FOR('):
 		return True
 	return False
