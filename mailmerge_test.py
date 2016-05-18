@@ -25,6 +25,9 @@ class MailMergeTest(unittest.TestCase):
 		self.temp3 = [self.temp1, self.temp2]
 		self.dict["DANCELIST"] = self.temp3
 
+	def test_fill_template_with_empty_params(self):
+		self.assertEqual(fill_template(), "")
+
 	def test_fill_template_with_result_1(self):
 		self.assertEqual(fill_template(self.scalar, self.dict), "Ginger Rogers was in The Martian. Ginger Rogers is a dancer.")
 
@@ -52,6 +55,9 @@ class MailMergeTest(unittest.TestCase):
 
 	def test_fill_template_with_result_6(self):
 		self.assertEqual(fill_template(self.combine, self.dict), "Ginger Rogers was in The Martian. Ginger Rogers is a dancer. They danced the Foxtrot with Jimbo They danced the Rhumba with Edgar")
+
+	def test_fill_template_with_longer_input(self):
+		self.assertEqual(fill_template(self.combine + self.loop, self.dict), "Ginger Rogers was in The Martian. Ginger Rogers is a dancer. They danced the Foxtrot with Jimbo They danced the Rhumba with EdgarThey danced the Foxtrot with Jimbo They danced the Rhumba with Edgar")
 
 	def test_fill_template_with_error(self):
 		with self.assertRaises(MacroNotDefined) as raises:

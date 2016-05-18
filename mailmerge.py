@@ -9,7 +9,7 @@ Simple mail merge facility for automatically generating email messages and sendi
 import re
 from string import Template
 
-def fill_template(template, subvars):
+def fill_template(template="", subvars={}):
 	'''
 	template: Python string that can contain two macro forms.
 	subvars: Python dictionary which contains key-value pairs, with key is the macro name and value is the macro replacement.
@@ -19,12 +19,14 @@ def fill_template(template, subvars):
 	
 	i = 0
 	while i < len(strings):	
+		processed_as_loop = False
 		current = strings[i]
-
+		
 		if is_scalar(current):
 			output += translate_scalar(current, subvars)
 
 		elif is_loop(current):
+			processed_as_loop = True
 			end_is_found = False
 			temp = ""
 
@@ -48,8 +50,10 @@ def fill_template(template, subvars):
 
 		else:
 			output += current
-
-		i += 1
+		
+		if not processed_as_loop:
+			i += 1
+			
 	return output
 
 
