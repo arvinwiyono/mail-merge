@@ -6,7 +6,7 @@ class MailMergeTest(unittest.TestCase):
 	def setUp(self):
 		self.scalar = '$(DANCER) was in $(FILM). $(DANCER) is a dancer.'
 		self.loop = "$FOR(DANCELIST,\"They danced the $(STEP) with $(DANCER)\")"
-		self.combine = self.scalar + ' ' + self.loop
+		self.combine = self.scalar + self.loop
 
 		self.dict = {}
 		self.dict['DANCER'] = 'Ginger Rogers'
@@ -28,7 +28,7 @@ class MailMergeTest(unittest.TestCase):
 		self.scalar_result = 'Ginger Rogers was in The Martian. Ginger Rogers is a dancer.'
 		self.loop_result = 'They danced the Foxtrot with Jimbo They danced the Rhumba with Edgar'
 
-
+	# test fill_template
 	def test_fill_template_with_empty_params(self):
 		self.assertEqual(fill_template(), '')
 
@@ -58,10 +58,16 @@ class MailMergeTest(unittest.TestCase):
 		self.assertEqual(fill_template("$FOR(abc123,\"hello$(HELLO)\")", temp3), 'helloArvin helloWanyu yin')
 
 	def test_fill_template_with_result_6(self):
-		self.assertEqual(fill_template(self.combine, self.dict), self.scalar_result + ' ' + self.loop_result)
+		self.assertEqual(fill_template(self.combine, self.dict), self.scalar_result + self.loop_result)
 
 	def test_fill_template_with_longer_input(self):
-		self.assertEqual(fill_template(self.combine + self.loop, self.dict), self.scalar_result + ' ' + self.loop_result + self.loop_result)
+		self.assertEqual(fill_template(self.combine + self.loop, self.dict), self.scalar_result + self.loop_result + self.loop_result)
+
+	def test_fill_template_with_weird_macro_1(self):
+		self.assertEqual(fill_template("($$$$$A)", {}), "(A)")
+
+	def test_fill_template_with_weird_macro_2(self):
+		self.assertEqual(fill_template("$($$$$$A)", {}), "(A)")
 
 	def test_fill_template_with_error(self):
 		with self.assertRaises(MacroNotDefined) as raises:
@@ -69,31 +75,42 @@ class MailMergeTest(unittest.TestCase):
 		self.assertEqual(str(raises.exception), "The macro: 'abc123' is not defined")
 
 	# test is_scalar()
-	def test_is_scalar_returns_true_1(self):
-		self.assertTrue(is_scalar('(DANCER'))
+	def test_is_scalar_returns_true(self):
+		self.assertTrue(is_scalar('(D'))
 
-	def test_is_scalar_returns_true_2(self):
-		self.assertTrue(is_scalar('('))
+	def test_is_scalar_returns_false_when_pattern_not_matched1(self):
+		self.assertFalse(is_scalar('('))
 
-	def test_is_scalar_returns_false(self):
+	def test_is_scalar_returns_false_when_pattern_not_matched2(self):
 		self.assertFalse(is_scalar('F'))
+
+	def test_is_scalar__when_openbracket_is_followed_by_nonalpha_returns_false(self):
+		self.assertFalse(is_scalar('(?'))
 
 	def test_is_scalar_returns_false_when_param_is_empty(self):
 		self.assertFalse(is_scalar(''))
-
 
 	def test_is_scalar_returns_false_when_no_param_is_given(self):
 		self.assertFalse(is_scalar())
 
 	# test is_loop()
-	def test_is_loop_returns_true_1(self):
-		self.assertTrue(is_loop('FOR( something'))
+	def test_is_loop_returns_true(self):
+		self.assertTrue(is_loop('FOR(s??'))
 
-	def test_is_loop_returns_true_2(self):
-		self.assertTrue(is_loop('FOR('))
+	def test_is_loop_when_openbracket_is_followed_by_nonalpha_returns_false(self):
+		self.assertFalse(is_loop('FOR( something'))
 
-	def test_is_loop_returns_false(self):
+	def test_is_loop_returns_false_when_pattern_not_matched_1(self):
+		self.assertFalse(is_loop('FOR('))
+
+	def test_is_loop_returns_false_when_pattern_not_matched_2(self):
 		self.assertFalse(is_loop('FORA'))
+	
+	def test_is_loop_returns_false__when_pattern_not_matched_3(self):
+		self.assertFalse(is_loop('FOR'))
+	
+	def test_is_loop_returns_false__when_pattern_not_matched_4(self):
+		self.assertFalse(is_loop('FO'))
 
 	def test_is_loop_returns_false_with_empty_string(self):
 		self.assertFalse(is_loop(''))
@@ -101,12 +118,7 @@ class MailMergeTest(unittest.TestCase):
 	def test_is_loop_returns_false_when_no_param_is_given(self):
 		self.assertFalse(is_loop())
 
-	def test_is_loop_returns_false_boundary_1(self):
-		self.assertFalse(is_loop('FO'))
-
-	def test_is_loop_returns_false_boundary_2(self):
-		self.assertFalse(is_loop('FOR'))
-
+	# test translate scalar
 	def test_translate_scalar(self):
 		temp = {'fgh':'test'}
 		self.assertEqual(translate_scalar('(fgh) ijk', temp), 'test ijk')
@@ -116,6 +128,7 @@ class MailMergeTest(unittest.TestCase):
 			translate_scalar('(fgh) ijk', {})
 		self.assertEqual(str(raises.exception), "The macro: 'fgh' is not defined")
 
+	# test translate loop
 	def test_translate_loop(self):
 		self.assertEqual(translate_loop('They danced the (STEP) in scene (SCENE)', self.temp3), 'They danced the Foxtrot in scene 1 They danced the Rhumba in scene 2')
 

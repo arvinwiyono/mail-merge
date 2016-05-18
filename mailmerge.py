@@ -58,12 +58,12 @@ def fill_template(template="", subvars={}):
 
 
 def is_scalar(string=""):
-	if (len(string) > 0) and (string[0] == '('):
+	if re.match(r"\(\w+", string):
 		return True
 	return False
 
 def is_loop(string=""):
-	if(len(string) >= 4) and (string[0:4] == 'FOR('):
+	if re.match(r"FOR\(\w+", string):
 		return True
 	return False
 
