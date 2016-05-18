@@ -58,7 +58,7 @@ def fill_template(template="", subvars={}):
 
 
 def is_scalar(string=""):
-	if re.match(r"\(\w+", string):
+	if re.match(r"\(\w+\)", string):
 		return True
 	return False
 

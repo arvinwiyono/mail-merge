@@ -76,12 +76,15 @@ class MailMergeTest(unittest.TestCase):
 
 	# test is_scalar()
 	def test_is_scalar_returns_true(self):
-		self.assertTrue(is_scalar('(D'))
+		self.assertTrue(is_scalar('(D)'))
 
 	def test_is_scalar_returns_false_when_pattern_not_matched1(self):
-		self.assertFalse(is_scalar('('))
+		self.assertFalse(is_scalar('(D'))
 
 	def test_is_scalar_returns_false_when_pattern_not_matched2(self):
+		self.assertFalse(is_scalar('('))
+
+	def test_is_scalar_returns_false_when_pattern_not_matched3(self):
 		self.assertFalse(is_scalar('F'))
 
 	def test_is_scalar__when_openbracket_is_followed_by_nonalpha_returns_false(self):
