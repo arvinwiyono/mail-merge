@@ -28,6 +28,12 @@ class MailMergeTest(unittest.TestCase):
 		self.scalar_result = 'Ginger Rogers was in The Martian. Ginger Rogers is a dancer.'
 		self.loop_result = 'They danced the Foxtrot with Jimbo They danced the Rhumba with Edgar'
 
+		self.host = "smtp.gmail.com:587"
+		self.username = "awy1wyyin1"
+		self.password = "fit4004rocks"
+		self.from_address = "awy1wyyin1@gmail.com"
+		self.subject = "FIT4004 Assignment 3 Test Messages"
+
 	# test fill_template
 	def test_fill_template_with_empty_params(self):
 		self.assertEqual(fill_template(), '')
@@ -140,6 +146,19 @@ class MailMergeTest(unittest.TestCase):
 			temp = {}
 			translate_loop('They danced the (STEP)', [temp])
 		self.assertEqual(str(raises.exception), "The macro: 'STEP' is not defined")
+
+	def test_MailMerge_init(self):
+		mm = MailMerge(self.host, self.username, self.password, self.from_address)
+		self.assertEqual(mm.host, self.host)
+		self.assertEqual(mm.username, self.username)
+		self.assertEqual(mm.password, self.password)
+		self.assertEqual(mm.from_address, self.from_address)
+	
+	def test_build_message(self):
+		mm = MailMerge(self.host, self.username, self.password, self.from_address)
+		message = mm.build_message("wyyin1@student.monash.edu", self.subject, "test message")
+		expected_result = "From: awy1wyyin1@gmail.com\r\nTo: wyyin1@student.monash.edu\r\nSubject: FIT4004 Assignment 3 Test Messages\r\n\r\ntest message"
+		self.assertEqual(message, expected_result)
 
 if __name__ == '__main__':
 	unittest.main()

@@ -94,3 +94,29 @@ def translate_loop(macro, loop_dicts):
 class MacroNotDefined(Exception):
 	def __init__(self, missing_macro):
 		Exception.__init__(self, "The macro: " + missing_macro + " is not defined")
+
+class MailMerge():
+	def __init__(self, host, username, password, from_address):
+		self.host = host
+		self.username = username
+		self.password = password
+		self.from_address = from_address
+		
+	def build_message(self, to, subject, body):
+		message = "\r\n".join([
+		 "From: " + self.from_address,
+		 "To: " + to,
+		 "Subject: " + subject,
+		 "",
+		 body
+		])
+		return message
+	
+	def send_message(self, to, msg):
+		server = smtplib.SMTP(self.host)
+		server.ehlo()
+		server.starttls()
+		server.login(self.username, self.password)
+		result = server.sendmail(self.from_address, to, msg)
+		server.quit()
+		return result
