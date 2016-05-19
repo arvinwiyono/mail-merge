@@ -1,5 +1,8 @@
 import unittest
+from unittest.mock import patch, call
 from mailmerge import *
+import smtplib
+from copy import deepcopy
 
 class MailMergeTest(unittest.TestCase):
 
@@ -29,10 +32,19 @@ class MailMergeTest(unittest.TestCase):
 		self.loop_result = 'They danced the Foxtrot with Jimbo They danced the Rhumba with Edgar'
 
 		self.host = "smtp.gmail.com:587"
-		self.username = "awy1wyyin1"
+		self.username = "awiy1wyyin1"
 		self.password = "fit4004rocks"
-		self.from_address = "awy1wyyin1@gmail.com"
+		self.from_address = "awiy1wyyin1@gmail.com"
+		self.to = "wyyin1@student.monash.edu"
 		self.subject = "FIT4004 Assignment 3 Test Messages"
+
+		self.mm = MailMerge(self.host, self.username, self.password, self.from_address)
+
+		self.second_dict = deepcopy(self.dict)
+		self.second_dict["DANCER"] = "Fred Astaire"
+		self.dict["to"] = "fred.nurk@random.org"
+		self.second_dict["to"] = "gina.g@eurovisionretirementhome.com"
+
 
 	# test fill_template
 	def test_fill_template_with_empty_params(self):
@@ -148,17 +160,53 @@ class MailMergeTest(unittest.TestCase):
 		self.assertEqual(str(raises.exception), "The macro: 'STEP' is not defined")
 
 	def test_MailMerge_init(self):
-		mm = MailMerge(self.host, self.username, self.password, self.from_address)
-		self.assertEqual(mm.host, self.host)
-		self.assertEqual(mm.username, self.username)
-		self.assertEqual(mm.password, self.password)
-		self.assertEqual(mm.from_address, self.from_address)
+		self.assertEqual(self.mm.host, self.host)
+		self.assertEqual(self.mm.username, self.username)
+		self.assertEqual(self.mm.password, self.password)
+		self.assertEqual(self.mm.from_address, self.from_address)
 	
 	def test_build_message(self):
-		mm = MailMerge(self.host, self.username, self.password, self.from_address)
-		message = mm.build_message("wyyin1@student.monash.edu", self.subject, "test message")
-		expected_result = "From: awy1wyyin1@gmail.com\r\nTo: wyyin1@student.monash.edu\r\nSubject: FIT4004 Assignment 3 Test Messages\r\n\r\ntest message"
+		message = self.mm.build_message(self.to, self.subject, "test message")
+		expected_result = "From: awiy1wyyin1@gmail.com\r\nTo: wyyin1@student.monash.edu\r\nSubject: FIT4004 Assignment 3 Test Messages\r\n\r\ntest message"
 		self.assertEqual(message, expected_result)
+
+	@patch('smtplib.SMTP')
+	def test_send_mail(self, mock_smtp):
+		mock_instance = mock_smtp.return_value
+		self.mm.send_mail(self.to, "message")
+
+		smtp_calls = [call.ehlo(), call.starttls(), call.login(self.username, self.password), call.sendmail(self.from_address, self.to, "message"), call.quit()]
+		mock_instance.assert_has_calls(smtp_calls)
+
+	@patch('smtplib.SMTP')
+	def test_send_mail_with_invalid_username_or_password(self, mock_smtp):
+		mock_instance = mock_smtp.return_value
+		mock_instance.login.side_effect = smtplib.SMTPAuthenticationError(535, "error")
+
+		with self.assertRaises(Exception) as raises:
+			self.mm.send_mail(self.to, 'message')
+		self.assertEqual(str(raises.exception), "Invalid username or password")
+
+	@patch('smtplib.SMTP')
+	def test_send_mail_with_invalid_recipient(self, mock_smtp):
+		mock_instance = mock_smtp.return_value
+		mock_instance.sendmail.side_effect = smtplib.SMTPRecipientsRefused({})
+
+		with self.assertRaises(Exception) as raises:
+			self.mm.send_mail(self.to, 'message')
+		self.assertEqual(str(raises.exception), "Invalid recipient")
+	
+	@patch('smtplib.SMTP')
+	def test_send_mail_return_true(self, mock_smtp):
+		mock_instance = mock_smtp.return_value
+		self.assertEqual(self.mm.send_mail(self.to, 'message'), True)
+
+	
+	def test_mailmerge_dict_tokey(self):
+		with self.assertRaises(Exception) as raises:
+			self.mm.mailmerge("template", self.subject, [self.dict, {}])
+		self.assertEqual(str(raises.exception), "'to' key is not found")
+
 
 if __name__ == '__main__':
 	unittest.main()

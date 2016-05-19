@@ -8,6 +8,7 @@ Simple mail merge facility for automatically generating email messages and sendi
 '''
 import re
 from string import Template
+import smtplib
 
 def fill_template(template="", subvars={}):
 	'''
@@ -112,11 +113,24 @@ class MailMerge():
 		])
 		return message
 	
-	def send_message(self, to, msg):
+	def send_mail(self, to, msg):
 		server = smtplib.SMTP(self.host)
 		server.ehlo()
 		server.starttls()
-		server.login(self.username, self.password)
-		result = server.sendmail(self.from_address, to, msg)
+		try:
+			server.login(self.username, self.password)
+			server.sendmail(self.from_address, to, msg)
+		except smtplib.SMTPAuthenticationError:
+			raise Exception("Invalid username or password")
+		except smtplib.SMTPRecipientsRefused:
+			raise Exception("Invalid recipient")
 		server.quit()
-		return result
+		return True
+
+	def mailmerge(self, template, subject, subvarlist):
+		for dictionary in subvarlist:
+			try:
+				dictionary['to']
+			except KeyError:
+				raise Exception("'to' key is not found")
+		
