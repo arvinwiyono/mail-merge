@@ -42,8 +42,8 @@ class MailMergeTest(unittest.TestCase):
 
 		self.second_dict = deepcopy(self.dict)
 		self.second_dict["DANCER"] = "Fred Astaire"
-		self.dict["to"] = "fred.nurk@random.org"
-		self.second_dict["to"] = "gina.g@eurovisionretirementhome.com"
+		self.dict["to"] = self.to
+		self.second_dict["to"] = "awiy1@student.monash.edu"
 
 
 	# test fill_template
@@ -201,12 +201,24 @@ class MailMergeTest(unittest.TestCase):
 		mock_instance = mock_smtp.return_value
 		self.assertEqual(self.mm.send_mail(self.to, 'message'), True)
 
-	
-	def test_mailmerge_dict_tokey(self):
+	@patch('mailmerge.MailMerge.send_mail')
+	def test_mailmerge_dict_tokey(self, mm_mock_send_mail):
+		mm_mock_send_mail.return_value = True
 		with self.assertRaises(Exception) as raises:
 			self.mm.mailmerge("template", self.subject, [self.dict, {}])
 		self.assertEqual(str(raises.exception), "'to' key is not found")
 
+	@patch('mailmerge.MailMerge.send_mail')
+	def test_mailmerge_return_successful_messages(self, mm_mock_send_mail):
+		mm_mock_send_mail.return_value = True
+		expected_result = ["Message is successfully sent to " + self.dict['to'], "Message is successfully sent to " + self.second_dict['to']]
+		self.assertEqual( self.mm.mailmerge(self.combine, "Test mailmerge()", [self.dict, self.second_dict]), expected_result)
+
+	@patch('mailmerge.MailMerge.send_mail')
+	def test_mailmerge_return_failed_messages(self, mm_mock_send_mail):
+		mm_mock_send_mail.side_effect = Exception("Invalid username or password")
+		expected_result = ["Failed to send message to " + self.dict['to'], "Failed to send message to " + self.second_dict['to']]
+		self.assertEqual( self.mm.mailmerge(self.combine, "Test mailmerge()", [self.dict, self.second_dict]), expected_result)
 
 if __name__ == '__main__':
 	unittest.main()

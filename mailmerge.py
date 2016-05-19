@@ -128,9 +128,21 @@ class MailMerge():
 		return True
 
 	def mailmerge(self, template, subject, subvarlist):
+		output = []
 		for dictionary in subvarlist:
 			try:
-				dictionary['to']
+				to = dictionary['to']
+				body = fill_template(template, dictionary)
+				message = self.build_message(to, subject, body)
+				self.send_mail(to, message)
+				output.append("Message is successfully sent to " + to)
 			except KeyError:
 				raise Exception("'to' key is not found")
+			except:
+				output.append("Failed to send message to " + to)
+		return output
+
+			
+
+
 		
