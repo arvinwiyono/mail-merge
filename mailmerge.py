@@ -44,7 +44,7 @@ def fill_template(template="", subvars={}):
 			# strip off double quote marks
 			macro = macro[1:-1]
 			if not key in subvars:
-				raise  MacroNotDefined("The macro: '" + key + "' is not defined")
+				raise  MacroNotDefined("'" + key + "'")
 
 			output += translate_loop(macro, subvars[key])
 
@@ -81,7 +81,7 @@ def translate_scalar(input_string, word_hash):
 		result = t.substitute(word_hash)
 		return result
 	except KeyError as e:
-		raise MacroNotDefined("The macro: " + str(e) + " is not defined")
+		raise MacroNotDefined(str(e))
 
 def translate_loop(macro, loop_dicts):
 	macro = macro.replace("(", "$(")
@@ -92,4 +92,5 @@ def translate_loop(macro, loop_dicts):
 	return output.rstrip()
 
 class MacroNotDefined(Exception):
-	pass
+	def __init__(self, missing_macro):
+		Exception.__init__(self, "The macro: " + missing_macro + " is not defined")
