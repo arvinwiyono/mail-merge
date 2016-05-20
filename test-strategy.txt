@@ -17,14 +17,14 @@ TDD PROCESS
 STRATEGY
 -----------------------
 Aside from TDD, we are going to adopt white-box testing strategy, particularly statement and branch coverage. In some cases, boundary analysis testing needs to be applied. For example: when a function has an if-statement that checks whether the length of a string meets the minimum value.
+For a bigger aggregated function (function that makes use of one or more other functions) such as fill_template(), we will devise mostly functional tests to verify whether it produces the right macro substitution.
 
 EXCEPTION TEST
 Any returned exceptions by Python libraries must be handled gracefully and tested.
 
 MOCK/PATCH/CALL
 unittest.mock is used for creating doubles of any external modules that accesses a network. This is useful to test our module in isolation while being able to control the environment. 
-
-Under necessary circumstances, mock instances need to be verified by using: assert_called_() function family to indicate whether the correct functions have been executed.
+Under necessary circumstances, mock instances need to be verified by using: assert_called_() / has_calls() function family to indicate whether the correct functions have been executed.
 
 REGRESSION TEST
 Before pushing to the remote, both team members are obligated to run regression testing by executing the command: nosetests
