@@ -69,6 +69,9 @@ def is_loop(string=""):
 	return False
 
 def translate_scalar(input_string, word_hash):
+	'''
+	Substitute the scalar with the value from the word_hash
+	'''
 	translation = str.maketrans("()", "{}")
 
 	input_string = input_string.translate(translation)
@@ -85,6 +88,10 @@ def translate_scalar(input_string, word_hash):
 		raise MacroNotDefined(str(e))
 
 def translate_loop(macro, loop_dicts):
+	'''
+	Substitute the loop with the value from the loop_dicts dictionary.
+	It calls function translate_scalar to substitute each scalar inside the loop
+	'''
 	macro = macro.replace("(", "$(")
 	output = ""
 	for ld in loop_dicts:
@@ -114,6 +121,9 @@ class MailMerge():
 		return message
 	
 	def send_mail(self, to, msg):
+		'''
+		Start and run the SMTP server to send the messge msg to the email address 
+		'''
 		server = smtplib.SMTP(self.host)
 		server.ehlo()
 		server.starttls()
@@ -128,6 +138,9 @@ class MailMerge():
 		return True
 
 	def mailmerge(self, template, subject, subvarlist):
+		'''
+		Send messages to multiple email addresses
+		'''
 		output = []
 		for dictionary in subvarlist:
 			try:
