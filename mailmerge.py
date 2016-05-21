@@ -137,7 +137,7 @@ class MailMerge():
 				self.send_mail(to, message)
 				output.append("Message is successfully sent to " + to)
 			except KeyError:
-				raise Exception("'to' key is not found")
+				raise MacroNotDefined("'to'")
 			except:
 				output.append("Failed to send message to " + to)
 		return output
