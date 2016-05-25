@@ -33,3 +33,4 @@ coverage run mailmerge_test.py
 coverage report
 coverage html
 ```
+Coverage **htmlcov.zip** is also downloadable from the archived artifact in the Drone.io CI
