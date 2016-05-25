@@ -32,5 +32,7 @@ nosetests
 coverage run mailmerge_test.py
 coverage report
 coverage html
+coverage run --branch mailmerge_test.py
+coverage report
 ```
-Coverage **htmlcov.zip** is also downloadable from the archived artifact in the Drone.io CI
+Coverage **statement-cov.zip** and **branch-cov.zip** are downloadable from the archived artifacts in the Drone.io CI
