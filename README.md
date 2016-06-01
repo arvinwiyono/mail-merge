@@ -1,6 +1,5 @@
 # FIT4004 Assignment 3 - Automated Unit Testing #
-
-![python-snake.png](https://bitbucket.org/repo/LBGnXb/images/2060809057-python-snake.png)
+![Python](http://s33.postimg.org/wcj9d0t0v/python_snake.png)
 
 ## Simple mailmerge functionality with Python ##
 * Arvin Wiyono (awiy1@student.monash.edu)
@@ -14,12 +13,6 @@
 * Nosetests (http://nose.readthedocs.io/en/latest/)
 * Coverage.py (https://coverage.readthedocs.io/en/coverage-4.0.3/)
 * Drone.io for CI (https://drone.io/)
-
-### Build status ###
-![status.PNG](https://bitbucket.org/repo/LBGnXb/images/2460734211-status.PNG)
-
-### Coverage ###
-![coverage.PNG](https://bitbucket.org/repo/LBGnXb/images/908951404-coverage.PNG)
 
 ### Run the unit test ###
 ```shell
