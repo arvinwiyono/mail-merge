@@ -1,4 +1,4 @@
-![Travis CI Build](https://travis-ci.org/arvinwiyono/mailmerge.svg?branch=master)
+![Travis CI Build](https://travis-ci.org/arvinwiyono/mail-merge.svg?branch=master)
 # FIT4004 Assignment 3 - Automated Unit Testing #
 ![Python](http://s33.postimg.org/wcj9d0t0v/python_snake.png)
 
